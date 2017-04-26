@@ -1,5 +1,6 @@
 package ops
 
+import ops.FieldRun.Aux
 import shapeless.::
 import shapeless.<:!<
 import shapeless.HList
@@ -35,25 +36,22 @@ private trait FieldRun[K, V, R2 <: HList] {
   def apply(v: V, r2: R2): Out
 }
 
-private object FieldRun {
+private trait loFieldRun {
+  implicit def replace[K, V, V1, R2T <: HList]
+  : Aux[K, V, FieldType[K, V1] :: R2T, FieldType[K, V] :: R2T] = new FieldRun[K, V, FieldType[K, V1] :: R2T] {
+    type Out = FieldType[K, V] :: R2T
+    def apply(v: V, r2: FieldType[K, V1] :: R2T): Out = field[K](v) :: r2.tail
+  }
+}
+
+private object FieldRun extends loFieldRun {
   type Aux[K, V, R2 <: HList, O <: HList] = FieldRun[K, V, R2] {type Out = O}
-//  def apply[K, V, M <: HList](implicit kr: FieldRun[K, V, M]): Aux[K, V, M, kr.Out] = kr
+
   implicit def merge[K, V <: HList, V2 <: HList, R2T <: HList](
     implicit m: DeepMerge[V, V2]
   ): Aux[K, V, FieldType[K, V2] :: R2T, FieldType[K, m.Out] :: R2T] = new FieldRun[K, V, FieldType[K, V2] :: R2T] {
     type Out = FieldType[K, m.Out] :: R2T
-    def apply(v: V, r2: FieldType[K, V2] :: R2T): Out = {
-      field[K](m(v, r2.head)) :: r2.tail
-    }
-  }
-
-  implicit def replace[K, V, R2T <: HList](
-    implicit ev: V <:!< HList
-  ): Aux[K, V, FieldType[K, V] :: R2T, FieldType[K, V] :: R2T] = new FieldRun[K, V, FieldType[K, V] :: R2T] {
-    type Out = FieldType[K, V] :: R2T
-    def apply(v: V, r2: FieldType[K, V] :: R2T): Out = {
-      field[K](v) :: r2.tail
-    }
+    def apply(v: V, r2: FieldType[K, V2] :: R2T): Out = field[K](m(v, r2.head)) :: r2.tail
   }
 
   implicit def add[K, V]: Aux[K, V, HNil, FieldType[K, V] :: HNil] = new FieldRun[K, V, HNil] {
@@ -62,13 +60,11 @@ private object FieldRun {
   }
 
   implicit def miss[K, V, K2, V2, R2T <: HList](
-    implicit r: FieldRun[K, V, R2T],
-    ev: K <:!< K2
+    implicit ev: K <:!< K2,
+    r: FieldRun[K, V, R2T]
   ): Aux[K, V, FieldType[K2, V2] :: R2T, FieldType[K2, V2] :: r.Out] = new FieldRun[K, V, FieldType[K2, V2] :: R2T] {
     type Out = FieldType[K2, V2] :: r.Out
-    def apply(v: V, r2: FieldType[K2, V2] :: R2T): Out = {
-      r2.head :: r(v, r2.tail)
-    }
+    def apply(v: V, r2: FieldType[K2, V2] :: R2T): Out = r2.head :: r(v, r2.tail)
   }
 
 
