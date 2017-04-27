@@ -1,6 +1,10 @@
 //import ops.DepthSubtypeOf
+import ops.Depth
+import ops.RecordSubType
+import ops.Width
 import org.scalatest.FunSuite
 import org.scalatest.Matchers
+import shapeless.HNil
 import shapeless.record.Record
 //import shapeless.test.illTyped
 import syntax.RecordSyntax
@@ -37,27 +41,8 @@ class DeepMergerTest extends FunSuite with Matchers {
     val outer11 = Record(d = 11, e = inner11, x = "bar")
     outer1.deepMerge(outer11) shouldBe outer11
     outer11.deepMerge(outer1) shouldBe outer1
-    type x1 = Record.`'d->String`.T
-  type x= Record.`'d->Int, 'e->x1`.T
-    println(outer1.extract[x])
+
   }
 
-
-
-
-//  test("depth subtype") {
-//
-//    trait X
-//    trait Y extends X
-//
-//    type Inner11 = Record.`'e->Boolean, 'm->Double, 'd->Y`.T
-//    type Outer11 = Record.`'e->Inner11, 'd->Int, 'x -> String`.T
-//    type Inner22 = Record.`'d->X, 'm->Double`.T
-//    type Outer22 = Record.`'d->Int, 'e->Inner22`.T
-//
-//    implicitly[Outer11 DepthSubtypeOf Outer22]
-//
-//    illTyped("""implicitly[Outer22 DepthSubtypeOf Outer11]""")
-//  }
 
 }
