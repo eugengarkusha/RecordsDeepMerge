@@ -10,8 +10,8 @@ trait SubtypingMode
 trait Depth extends SubtypingMode
 trait Width extends SubtypingMode
 
-//TODO: swich from Mode and type aliases to separate classes with the following setup WidthSubtype extends DepthSubType and directluy reuse DepthSubtype in widthSubType
-//TODO: use the same approach to reuse DeptMerder code in Merger typeclass
+
+//TODO: use the same approach to reuse DepthMerger code in Merger typeclass
 //Do we need symbolic type aliases for Depth/Witdth subtypes ( like <<: or smth)
 trait RecordSubType[C <: HList, P <: HList, +T] extends Function1[C, P]
 
@@ -20,7 +20,7 @@ trait LLO {
     implicit r: Remover.Aux[C, K, (V1, CT)],
     ev: V1 <:< V,
     ds: RecordSubType[CT, PT, T]
-  ): RecordSubType[C, FieldType[K, V] :: PT, T] with Width with Depth = new RecordSubType[C, FieldType[K, V] :: PT, T] with Width with Depth {
+  ): RecordSubType[C, FieldType[K, V] :: PT, T] = new RecordSubType[C, FieldType[K, V] :: PT, T] {
     def apply(c: C): FieldType[K, V] :: PT = {
       val (h, t) = r(c)
       field[K](ev(h)) :: ds(t)
@@ -38,9 +38,8 @@ object RecordSubType extends LLO {
     implicit r: Remover.Aux[C, K, (V1, CT)],
     ds1: RecordSubType[V1, V, Depth],
     ds2: RecordSubType[CT, PT, Depth]
-  ): RecordSubType[C, FieldType[K, V] :: PT, Depth] with Depth = new RecordSubType[C, FieldType[K, V] :: PT, Depth] with Depth {
+  ): RecordSubType[C, FieldType[K, V] :: PT, Depth] = new RecordSubType[C, FieldType[K, V] :: PT, Depth] {
     def apply(c: C): FieldType[K, V] :: PT = {
-      println("NESTED!")
       val (h, t) = r(c)
       field[K](ds1(h)) :: ds2(t)
     }
