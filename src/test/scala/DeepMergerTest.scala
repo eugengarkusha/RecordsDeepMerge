@@ -11,7 +11,6 @@ class DeepMergerTest extends FunSuite with Matchers {
 
   test("deep merge") {
 
-
     //"behaves identically to RecordOps.merge for non-nested records"
     val r3 = Record(d = Record(x = "X1", m = "M"), e = true, x = "X")
     val r4 = Record(d = "D", e = false, x = 2, m = 6)
@@ -38,7 +37,9 @@ class DeepMergerTest extends FunSuite with Matchers {
     val outer11 = Record(d = 11, e = inner11, x = "bar")
     outer1.deepMerge(outer11) shouldBe outer11
     outer11.deepMerge(outer1) shouldBe outer1
-
+    type x1 = Record.`'d->String`.T
+  type x= Record.`'d->Int, 'e->x1`.T
+    println(outer1.extract[x])
   }
 
 

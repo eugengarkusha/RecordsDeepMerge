@@ -2,18 +2,15 @@ package ops
 
 
 import shapeless.::
+import shapeless.DepFn2
 import shapeless.HList
 import shapeless.HNil
 import shapeless.labelled.FieldType
-import shapeless.ops.record.Modifier
 import shapeless.ops.record.Remover
 import shapeless.labelled.field
 
 
-trait DeepMerger[R1 <: HList, R2 <: HList] {
-  type Out <: HList
-  def apply(r1: R1, r2: R2): Out
-}
+trait DeepMerger[R1 <: HList, R2 <: HList] extends DepFn2[R1, R2]
 
 trait Lo2 { self: DeepMerger.type =>
 
