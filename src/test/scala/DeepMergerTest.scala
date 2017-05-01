@@ -1,6 +1,6 @@
 //import ops.DepthSubtypeOf
 import ops.Depth
-import ops.RecordSubType
+import ops.Extractor
 import ops.Width
 import org.scalatest.FunSuite
 import org.scalatest.Matchers
@@ -35,7 +35,7 @@ class DeepMergerTest extends FunSuite with Matchers {
     val innerMerged21 = inner2.merge(inner1)
     outer1.deepMerge(outer2) shouldBe Record(d = -1, e = innerMerged12,  x = "foo")
     outer2.deepMerge(outer1) shouldBe Record(x = "boo", d = 10, e = innerMerged21)
-//
+
     //complete intersection
     val inner11 = Record(d = "D2", e = true)
     val outer11 = Record(d = 11, e = inner11, x = "bar")
