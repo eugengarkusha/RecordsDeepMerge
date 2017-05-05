@@ -14,7 +14,7 @@ trait Width extends ExtractionMode
 //TODO: use the same approach to reuse DepthMerger code in Merger typeclass
 
 //extracts super-record from sub-record (witnesses depth/width subtyping relation)
-trait Extractor[C <: HList, P <: HList, +T] extends Function1[C, P]
+trait Extractor[C <: HList, P <: HList, T] extends Function1[C, P]
 
 trait LowExtractor {
   implicit def plain[C <: HList, K, V, V1, CT <: HList, PT <: HList, T <: ExtractionMode](
