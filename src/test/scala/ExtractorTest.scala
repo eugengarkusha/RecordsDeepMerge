@@ -11,6 +11,8 @@ class ExtractorTest extends FunSuite with ExtendedMatchers {
 
     cmp(outer1.extract[Record.`'x->String, 'd-> Int`.T], Record(x = "foo", d = -1))
 
+    outer1.extract[Record.`'x->Any, 'd-> Any`.T] shouldBe Record(x = "foo", d = -1)
+
     type i = Record.`'x -> String, 'd->Int`.T
     cmp(outer1.deepExtract[Record.`'e->i, 'd-> Int`.T], Record(e = Record(x= "X", d = 3), d = -1))
 
