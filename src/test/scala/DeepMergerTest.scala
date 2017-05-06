@@ -19,6 +19,7 @@ class DeepMergerTest extends FunSuite with ExtendedMatchers {
     cmp(r3.merge(r5) , r3.deepMerge(r5))
     cmp(r5.merge(r3) , r5.deepMerge(r3))
 
+
     //nested
     val inner1 = Record(d = "D", e = false)
     val inner2 = Record(d = 3, m = 2D)
