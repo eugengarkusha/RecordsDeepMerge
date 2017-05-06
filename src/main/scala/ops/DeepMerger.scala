@@ -49,11 +49,11 @@ object DeepMerger extends Lo1
     implicit rm: Remover.Aux[R, K, (V1, RT)],
     m1: DeepMerger.Aux[V, V1, MO1],
     m2: DeepMerger.Aux[T, RT, MO2]
-  ): Aux[FieldType[K, V] :: T, R, MO1 :: MO2] = new DeepMerger[FieldType[K, V] :: T, R] {
-    type Out = MO1 :: MO2
+  ): Aux[FieldType[K, V] :: T, R, FieldType[K, MO1] :: MO2] = new DeepMerger[FieldType[K, V] :: T, R] {
+    type Out = FieldType[K, MO1] :: MO2
     def apply(r1: FieldType[K, V] :: T, r2: R ): Out = {
       val (rh, rt) = rm(r2)
-      m1(r1.head, rh) :: m2(r1.tail, rt)
+      field[K](m1(r1.head, rh)) :: m2(r1.tail, rt)
     }
   }
 
